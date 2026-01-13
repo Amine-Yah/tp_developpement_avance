@@ -17,5 +17,8 @@
     "motion": "catalog:",
     "next": "catalog:",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
   }
 }
