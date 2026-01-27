@@ -13,45 +13,57 @@ exports.MatchService = void 0;
 const common_1 = require("@nestjs/common");
 const event_emitter_1 = require("@nestjs/event-emitter");
 const player_service_1 = require("../player/player.service");
+const elo_calculator_1 = require("../common/elo-calculator");
 let MatchService = class MatchService {
     playerService;
     eventEmitter;
+    matches = [];
+    nextId = 1;
     constructor(playerService, eventEmitter) {
         this.playerService = playerService;
         this.eventEmitter = eventEmitter;
     }
-    async publishMatchResult(createMatchDto) {
+    publishMatchResult(createMatchDto) {
         const { winner: winnerId, loser: loserId, draw } = createMatchDto;
-        const winner = await this.playerService.findOne(winnerId).catch(() => null);
-        const loser = await this.playerService.findOne(loserId).catch(() => null);
-        if (!winner || !loser) {
+        let winner, loser;
+        try {
+            winner = this.playerService.findOne(winnerId);
+            loser = this.playerService.findOne(loserId);
+        }
+        catch {
             throw new common_1.UnprocessableEntityException('Winner or loser not found');
         }
-        const K = 32;
-        const expectedWinner = 1 / (1 + Math.pow(10, (loser.rank - winner.rank) / 400));
-        const expectedLoser = 1 / (1 + Math.pow(10, (winner.rank - loser.rank) / 400));
-        let actualWinner = 1;
-        let actualLoser = 0;
-        if (draw) {
-            actualWinner = 0.5;
-            actualLoser = 0.5;
-        }
-        const newWinnerRank = Math.round(winner.rank + K * (actualWinner - expectedWinner));
-        const newLoserRank = Math.round(loser.rank + K * (actualLoser - expectedLoser));
-        await this.playerService.update(winner.id, { rank: newWinnerRank });
-        await this.playerService.update(loser.id, { rank: newLoserRank });
+        const result = draw ? 'draw' : 'player1';
+        const { player1NewRank, player2NewRank } = (0, elo_calculator_1.calculateMatchResults)(winner.rank, loser.rank, result);
+        this.playerService.update(winner.id, { rank: player1NewRank });
+        this.playerService.update(loser.id, { rank: player2NewRank });
+        const match = {
+            id: this.nextId++,
+            player1Id: winner.id,
+            player2Id: loser.id,
+            result,
+            player1OldRank: winner.rank,
+            player2OldRank: loser.rank,
+            player1NewRank,
+            player2NewRank,
+            timestamp: new Date(),
+        };
+        this.matches.push(match);
         this.eventEmitter.emit('ranking.update', {
             type: 'RankingUpdate',
-            player: { id: winner.id, rank: newWinnerRank },
+            player: { id: winner.id, rank: player1NewRank },
         });
         this.eventEmitter.emit('ranking.update', {
             type: 'RankingUpdate',
-            player: { id: loser.id, rank: newLoserRank },
+            player: { id: loser.id, rank: player2NewRank },
         });
         return {
-            winner: { id: winner.id, rank: newWinnerRank },
-            loser: { id: loser.id, rank: newLoserRank },
+            winner: { id: winner.id, rank: player1NewRank },
+            loser: { id: loser.id, rank: player2NewRank },
         };
+    }
+    findAll() {
+        return this.matches;
     }
 };
 exports.MatchService = MatchService;

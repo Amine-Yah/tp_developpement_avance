@@ -1,48 +1,63 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { Player } from './entities/player.entity';
 
 @Injectable()
 export class PlayerService {
-  constructor(
-    @InjectRepository(Player)
-    private playerRepository: Repository<Player>,
-  ) {}
+  private players: Map<string, Player> = new Map();
 
-  async create(createPlayerDto: CreatePlayerDto): Promise<Player> {
-    const existing = await this.playerRepository.findOneBy({ id: createPlayerDto.id });
-    if (existing) {
+  private calculateAverageRank(): number {
+    if (this.players.size === 0) {
+      return 1200; // Default rank if no players exist
+    }
+    const sum = Array.from(this.players.values()).reduce((acc, player) => acc + player.rank, 0);
+    return Math.round(sum / this.players.size);
+  }
+
+  create(createPlayerDto: CreatePlayerDto): Player {
+    if (!createPlayerDto.id || createPlayerDto.id.trim().length === 0) {
+      throw new BadRequestException('Player ID is invalid');
+    }
+    
+    if (this.players.has(createPlayerDto.id)) {
       throw new ConflictException('Player already exists');
     }
-    const player = this.playerRepository.create({
+    
+    const averageRank = this.calculateAverageRank();
+    const player: Player = {
       id: createPlayerDto.id,
-      rank: 1200, // Default rank
-    });
-    return this.playerRepository.save(player);
+      rank: averageRank,
+    };
+    
+    this.players.set(player.id, player);
+    return player;
   }
 
-  findAll(): Promise<Player[]> {
-    return this.playerRepository.find();
+  findAll(): Player[] {
+    return Array.from(this.players.values());
   }
 
-  async findOne(id: string): Promise<Player> {
-    const player = await this.playerRepository.findOneBy({ id });
+  findOne(id: string): Player {
+    const player = this.players.get(id);
     if (!player) {
       throw new NotFoundException(`Player #${id} not found`);
     }
     return player;
   }
 
-  async update(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
-    const player = await this.findOne(id);
-    Object.assign(player, updatePlayerDto);
-    return this.playerRepository.save(player);
+  update(id: string, updatePlayerDto: UpdatePlayerDto): Player {
+    const player = this.findOne(id);
+    if (updatePlayerDto.rank !== undefined) {
+      player.rank = updatePlayerDto.rank;
+    }
+    this.players.set(id, player);
+    return player;
   }
 
-  async remove(id: string): Promise<void> {
-    await this.playerRepository.delete(id);
+  remove(id: string): void {
+    if (!this.players.delete(id)) {
+      throw new NotFoundException(`Player #${id} not found`);
+    }
   }
 }

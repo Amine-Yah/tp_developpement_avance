@@ -1,20 +1,30 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { Subject, Observable } from 'rxjs';
 import { PlayerService } from '../player/player.service';
 import { Player } from '../player/entities/player.entity';
+
+export interface RankingUpdate {
+  type: 'RankingUpdate';
+  player: {
+    id: string;
+    rank: number;
+  };
+}
 
 @Injectable()
 export class RankingService implements OnModuleInit {
   private ranking: Player[] = [];
+  private rankingUpdates$ = new Subject<RankingUpdate>();
 
   constructor(private readonly playerService: PlayerService) {}
 
-  async onModuleInit() {
-    await this.refreshRanking();
+  onModuleInit() {
+    this.refreshRanking();
   }
 
-  async refreshRanking() {
-    const players = await this.playerService.findAll();
+  refreshRanking() {
+    const players = this.playerService.findAll();
     this.ranking = players.sort((a, b) => b.rank - a.rank);
   }
 
@@ -22,8 +32,13 @@ export class RankingService implements OnModuleInit {
     return this.ranking;
   }
 
+  getUpdatesStream(): Observable<RankingUpdate> {
+    return this.rankingUpdates$.asObservable();
+  }
+
   @OnEvent('ranking.update')
-  async handleRankingUpdate() {
-    await this.refreshRanking();
+  handleRankingUpdate(update: RankingUpdate) {
+    this.refreshRanking();
+    this.rankingUpdates$.next(update);
   }
 }

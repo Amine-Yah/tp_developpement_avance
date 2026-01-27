@@ -3,14 +3,14 @@ import { CreateMatchDto } from './dto/create-match.dto';
 export declare class MatchController {
     private readonly matchService;
     constructor(matchService: MatchService);
-    publishMatchResult(createMatchDto: CreateMatchDto): Promise<{
+    publishMatchResult(createMatchDto: CreateMatchDto): {
         winner: {
-            id: string;
+            id: any;
             rank: number;
         };
         loser: {
-            id: string;
+            id: any;
             rank: number;
         };
-    }>;
+    };
 }

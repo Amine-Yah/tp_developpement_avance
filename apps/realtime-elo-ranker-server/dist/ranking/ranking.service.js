@@ -12,33 +12,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RankingService = void 0;
 const common_1 = require("@nestjs/common");
 const event_emitter_1 = require("@nestjs/event-emitter");
+const rxjs_1 = require("rxjs");
 const player_service_1 = require("../player/player.service");
 let RankingService = class RankingService {
     playerService;
     ranking = [];
+    rankingUpdates$ = new rxjs_1.Subject();
     constructor(playerService) {
         this.playerService = playerService;
     }
-    async onModuleInit() {
-        await this.refreshRanking();
+    onModuleInit() {
+        this.refreshRanking();
     }
-    async refreshRanking() {
-        const players = await this.playerService.findAll();
+    refreshRanking() {
+        const players = this.playerService.findAll();
         this.ranking = players.sort((a, b) => b.rank - a.rank);
     }
     getRanking() {
         return this.ranking;
     }
-    async handleRankingUpdate() {
-        await this.refreshRanking();
+    getUpdatesStream() {
+        return this.rankingUpdates$.asObservable();
+    }
+    handleRankingUpdate(update) {
+        this.refreshRanking();
+        this.rankingUpdates$.next(update);
     }
 };
 exports.RankingService = RankingService;
 __decorate([
     (0, event_emitter_1.OnEvent)('ranking.update'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
 ], RankingService.prototype, "handleRankingUpdate", null);
 exports.RankingService = RankingService = __decorate([
     (0, common_1.Injectable)(),
