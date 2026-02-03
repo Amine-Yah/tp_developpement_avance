@@ -9,9 +9,10 @@
 **Technologie Stack:**
 - **Backend:** NestJS (TypeScript) - Port 3001
 - **Frontend:** Next.js 15 (React) - Port 3000
+- **Base de Données:** SQLite avec TypeORM
 - **UI:** Tailwind CSS + Composants réutilisables
 - **Temps réel:** Server-Sent Events (SSE)
-- **Stockage:** En mémoire
+- **Stockage:** Persistant (SQLite) + En mémoire pour SSE
 
 ---
 
@@ -52,8 +53,9 @@ Le script `./run-tests.sh` exécute automatiquement **20 tests** validant :
 
 - **Serveur NestJS** - Framework utilisé, API complète, calcul Elo correct, SSE pour temps réel
 - **Client Next.js** - Framework utilisé, formulaires fonctionnels, affichage dynamique du classement
+- **Base de Données SQLite** - Persistance des joueurs et matchs avec TypeORM
 - **Librairie UI** - Composants réutilisables, Tailwind CSS appliqué
-- **Stockage en mémoire** - Joueurs et matchs gérés correctement
+- **Stockage persistant** - Joueurs et matchs sauvegardés en base de données
 - **Calcul Elo** - Formule `Rn = Ro + K × (W - We)` avec `We = 1/(1+10^((Rh-Rl)/400))` implémentée
 - **Bonus** - Matches automatiques implémentés
 
