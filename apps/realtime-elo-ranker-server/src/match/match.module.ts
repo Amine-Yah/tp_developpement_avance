@@ -7,5 +7,6 @@ import { PlayerModule } from '../player/player.module';
   imports: [PlayerModule],
   controllers: [MatchController],
   providers: [MatchService],
+  exports: [MatchService],
 })
 export class MatchModule {}

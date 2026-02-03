@@ -18,13 +18,22 @@ const PlayerForm: FC<PlayerFormProps> = (props) => {
       className="flex flex-col justify-center mb-4 gap-4 p-2 border border-gray-300 rounded-md"
       onSubmit={(evt) => {
         evt.preventDefault();
-        callback(playerName).then(res => {
-          if (res.ok) {
-            resetForm();
-          } else {
-            console.log("Error while posting player");
-          }
-        });
+        console.log("Submitting player:", playerName);
+        callback(playerName)
+          .then((res) => {
+            console.log("Response status:", res.status);
+            if (res.ok) {
+              resetForm();
+              alert("Joueur créé avec succès!");
+            } else {
+              alert("Erreur lors de la création du joueur");
+              console.log("Error response:", res);
+            }
+          })
+          .catch((err) => {
+            console.error("Error posting player:", err);
+            alert("Erreur de connexion au serveur");
+          });
       }}
     >
       <span className="text-xl">Nom du joueur</span>

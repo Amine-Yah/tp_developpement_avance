@@ -5,11 +5,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerService = void 0;
 const common_1 = require("@nestjs/common");
+const event_emitter_1 = require("@nestjs/event-emitter");
 let PlayerService = class PlayerService {
+    eventEmitter;
     players = new Map();
+    constructor(eventEmitter) {
+        this.eventEmitter = eventEmitter;
+    }
     calculateAverageRank() {
         if (this.players.size === 0) {
             return 1200;
@@ -30,6 +38,13 @@ let PlayerService = class PlayerService {
             rank: averageRank,
         };
         this.players.set(player.id, player);
+        this.eventEmitter.emit('ranking.update', {
+            type: 'RankingUpdate',
+            player: {
+                id: player.id,
+                rank: player.rank,
+            },
+        });
         return player;
     }
     findAll() {
@@ -58,6 +73,7 @@ let PlayerService = class PlayerService {
 };
 exports.PlayerService = PlayerService;
 exports.PlayerService = PlayerService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [event_emitter_1.EventEmitter2])
 ], PlayerService);
 //# sourceMappingURL=player.service.js.map

@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { PlayerModule } from './player/player.module';
 import { MatchModule } from './match/match.module';
 import { RankingModule } from './ranking/ranking.module';
+import { AutoMatchModule } from './auto-match/auto-match.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { RankingModule } from './ranking/ranking.module';
     PlayerModule,
     MatchModule,
     RankingModule,
+    AutoMatchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

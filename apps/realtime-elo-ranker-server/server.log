@@ -1,0 +1,67 @@
+
+> realtime-elo-ranker-server@0.0.1 start:dev
+> nest start --watch
+
+[2J[3J[H[[90m17:09:55[0m] Starting compilation in watch mode...
+
+[[90m17:10:05[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +9ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventEmitterModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPlayerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRankingModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMatchModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAutoMatchModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +36ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPlayerController {/api/player}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/player, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/player, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/player/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/player/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/player/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mMatchController {/api/match}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/match, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mRankingController {/api/ranking}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ranking, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/ranking/events, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAutoMatchController {/api/auto-match}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auto-match/start, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auto-match/stop, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auto-match/status, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 128830  - [39m03/02/2026 17:10:16 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +3ms[39m
+Démarrage des matches automatiques (intervalle: 5000ms)
+Matches automatiques arrêtés
+Démarrage des matches automatiques (intervalle: 5000ms)
+Matches automatiques arrêtés
+Démarrage des matches automatiques (intervalle: 5000ms)
+Matches automatiques arrêtés
+Démarrage des matches automatiques (intervalle: 5000ms)
+Match généré: test 2 vs Alice - Gagnant: Alice
+Match généré: test 2 vs Bob - Gagnant: test 2
+Match généré: test vs Amine - Gagnant: test
+Match généré: test 1 vs test - Gagnant: test
+Match généré: test vs Alice - Gagnant: Alice
+Match généré: test 3 vs test - Gagnant: test
+Match généré: test vs Alice - Gagnant: test
+Match généré: test vs test 3 - Gagnant: test 3
+Match généré: test 4 vs test - Gagnant: test 4
+Match généré: Charlie vs Amine - Gagnant: Amine
+Match généré: test 1 vs test 5 - Gagnant: test 5
+Match généré: Alice vs Bob - Gagnant: Alice
+Match généré: Charlie vs test - Gagnant: Charlie
+Match généré: test 5 vs test 1 - Gagnant: test 1
+Match généré: test 4 vs test - Gagnant: test 4
+Match généré: Amine vs test 4 - Gagnant: test 4
+Match généré: test 4 vs Alice - Gagnant: Alice
+Match généré: Bob vs Alice - Gagnant: Bob
+Match généré: test 4 vs Amine - Gagnant: Amine
+Match généré: Alexy vs Alice - Gagnant: Alexy
+Match généré: Alexy vs test 5 - Gagnant: test 5
+Les matches automatiques sont déjà en cours
+Matches automatiques arrêtés
+Démarrage des matches automatiques (intervalle: 5000ms)
+Matches automatiques arrêtés
+Killed

@@ -9,6 +9,7 @@ const poppinsRegular = Poppins({
   weight: "400",
   style: "normal",
   variable: "--poppins-regular",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {

@@ -1,4 +1,5 @@
 import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { Player } from './entities/player.entity';
@@ -6,6 +7,8 @@ import { Player } from './entities/player.entity';
 @Injectable()
 export class PlayerService {
   private players: Map<string, Player> = new Map();
+
+  constructor(private eventEmitter: EventEmitter2) {}
 
   private calculateAverageRank(): number {
     if (this.players.size === 0) {
@@ -31,6 +34,16 @@ export class PlayerService {
     };
     
     this.players.set(player.id, player);
+    
+    // Emit event to notify other services (like RankingService)
+    this.eventEmitter.emit('ranking.update', {
+      type: 'RankingUpdate',
+      player: {
+        id: player.id,
+        rank: player.rank,
+      },
+    });
+    
     return player;
   }
 

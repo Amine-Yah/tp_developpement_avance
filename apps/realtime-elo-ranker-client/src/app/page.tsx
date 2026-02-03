@@ -17,17 +17,22 @@ import {
 import { motion } from "motion/react";
 import postMatchResult from "../services/match/post-match-result";
 import postPlayer from "../services/player/post-player";
+import startAutoMatches from "../services/auto-match/start-auto-matches";
+import stopAutoMatches from "../services/auto-match/stop-auto-matches";
+import getAutoMatchStatus from "../services/auto-match/get-auto-match-status";
 
 const poppinsBold = Poppins({
   weight: "600",
   style: "normal",
   variable: "--poppins-bold",
+  subsets: ["latin"],
 });
 
 const poppinsSemiBold = Poppins({
   weight: "500",
   style: "normal",
   variable: "--poppins-semi-bold",
+  subsets: ["latin"],
 });
 
 /**
@@ -67,6 +72,7 @@ export default function Home() {
   }
 
   const [ladderData, setLadderData] = useState<PlayerData[]>([]);
+  const [isAutoMatchRunning, setIsAutoMatchRunning] = useState(false);
 
   const updateLadderData = useCallback((player: PlayerData) => {
     setLadderData((prevData) => {
@@ -75,6 +81,55 @@ export default function Home() {
       );
     });
   }, []);
+
+  const reloadRanking = useCallback(() => {
+    console.log("Reloading ranking from:", API_BASE_URL);
+    fetchRanking(API_BASE_URL)
+      .then((data) => {
+        console.log("Ranking data received:", data);
+        setLadderData(quickSortPlayers(data));
+      })
+      .catch((error) => {
+        console.error("Error reloading ranking:", error);
+      });
+  }, [API_BASE_URL]);
+
+  const handleStartAutoMatches = useCallback(async () => {
+    try {
+      await startAutoMatches(API_BASE_URL, 3000); // Match toutes les 3 secondes
+      setIsAutoMatchRunning(true);
+      console.log("Matches automatiques démarrés");
+    } catch (error) {
+      console.error("Erreur au démarrage des matches automatiques:", error);
+      alert("Erreur: Impossible de démarrer les matches automatiques");
+    }
+  }, [API_BASE_URL]);
+
+  const handleStopAutoMatches = useCallback(async () => {
+    try {
+      await stopAutoMatches(API_BASE_URL);
+      setIsAutoMatchRunning(false);
+      console.log("Matches automatiques arrêtés");
+    } catch (error) {
+      console.error("Erreur à l'arrêt des matches automatiques:", error);
+      alert("Erreur: Impossible d'arrêter les matches automatiques");
+    }
+  }, [API_BASE_URL]);
+
+  useEffect(() => {
+    // Vérifier le statut au chargement
+    try {
+      getAutoMatchStatus(API_BASE_URL)
+        .then((status) => {
+          setIsAutoMatchRunning(status.isRunning);
+        })
+        .catch((error) => {
+          console.error("Erreur lors de la vérification du statut:", error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [API_BASE_URL]);
 
   useEffect(() => {
     try {
@@ -141,9 +196,43 @@ export default function Home() {
             </h2>
             <PlayerForm
               callback={(playerName: string) =>
-                postPlayer(API_BASE_URL, playerName)
+                postPlayer(API_BASE_URL, playerName).then((res) => {
+                  if (res.ok) {
+                    // Attendre un peu puis recharger
+                    setTimeout(() => {
+                      console.log("Reloading after player creation...");
+                      reloadRanking();
+                    }, 500);
+                  }
+                  return res;
+                })
               }
             />
+          </div>
+          <div className="flex flex-col gap-4">
+            <h2 className={`${poppinsSemiBold.className} text-2xl`}>
+              Matches Automatiques
+            </h2>
+            <div className="flex flex-col justify-center mb-4 gap-4 p-2 border border-gray-300 rounded-md">
+              {isAutoMatchRunning ? (
+                <button
+                  onClick={handleStopAutoMatches}
+                  className="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded-md"
+                >
+                  Arrêter les matches
+                </button>
+              ) : (
+                <button
+                  onClick={handleStartAutoMatches}
+                  className="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded-md"
+                >
+                  Démarrer les matches
+                </button>
+              )}
+              <p className="text-sm text-gray-500">
+                Statut: {isAutoMatchRunning ? "En cours" : "Arrêté"}
+              </p>
+            </div>
           </div>
         </div>
       </motion.main>

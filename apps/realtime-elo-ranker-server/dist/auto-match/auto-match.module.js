@@ -6,20 +6,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MatchModule = void 0;
+exports.AutoMatchModule = void 0;
 const common_1 = require("@nestjs/common");
-const match_controller_1 = require("./match.controller");
-const match_service_1 = require("./match.service");
+const auto_match_service_1 = require("./auto-match.service");
+const auto_match_controller_1 = require("./auto-match.controller");
 const player_module_1 = require("../player/player.module");
-let MatchModule = class MatchModule {
+const match_module_1 = require("../match/match.module");
+let AutoMatchModule = class AutoMatchModule {
 };
-exports.MatchModule = MatchModule;
-exports.MatchModule = MatchModule = __decorate([
+exports.AutoMatchModule = AutoMatchModule;
+exports.AutoMatchModule = AutoMatchModule = __decorate([
     (0, common_1.Module)({
-        imports: [player_module_1.PlayerModule],
-        controllers: [match_controller_1.MatchController],
-        providers: [match_service_1.MatchService],
-        exports: [match_service_1.MatchService],
+        imports: [player_module_1.PlayerModule, match_module_1.MatchModule],
+        providers: [auto_match_service_1.AutoMatchService],
+        controllers: [auto_match_controller_1.AutoMatchController],
+        exports: [auto_match_service_1.AutoMatchService],
     })
-], MatchModule);
-//# sourceMappingURL=match.module.js.map
+], AutoMatchModule);
+//# sourceMappingURL=auto-match.module.js.map
