@@ -36,6 +36,8 @@ let PlayerService = class PlayerService {
         const player = {
             id: createPlayerDto.id,
             rank: averageRank,
+            createdAt: new Date(),
+            updatedAt: new Date(),
         };
         this.players.set(player.id, player);
         this.eventEmitter.emit('ranking.update', {
@@ -48,7 +50,8 @@ let PlayerService = class PlayerService {
         return player;
     }
     findAll() {
-        return Array.from(this.players.values());
+        const playersArray = Array.from(this.players.values());
+        return playersArray.sort((a, b) => b.rank - a.rank);
     }
     findOne(id) {
         const player = this.players.get(id);
@@ -61,14 +64,15 @@ let PlayerService = class PlayerService {
         const player = this.findOne(id);
         if (updatePlayerDto.rank !== undefined) {
             player.rank = updatePlayerDto.rank;
+            player.updatedAt = new Date();
         }
-        this.players.set(id, player);
         return player;
     }
     remove(id) {
-        if (!this.players.delete(id)) {
+        if (!this.players.has(id)) {
             throw new common_1.NotFoundException(`Player #${id} not found`);
         }
+        this.players.delete(id);
     }
 };
 exports.PlayerService = PlayerService;

@@ -1,18 +1,42 @@
+# Dependencies
 node_modules/
+.pnpm-lock.yaml
+
+# Build
 dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
 .env.local
 .env.*.local
-data/
-*.db
-*.sqlite
 
-# Build outputs
-apps/*/dist/
-libs/*/dist/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Dependencies
-**/node_modules/
+# OS
+.DS_Store
+Thumbs.db
 
-# Cache
-*.tsbuildinfo
-.eslintcache
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Next.js
+.next/
+out/
+
+# Temporary files
+tmp/
+temp/

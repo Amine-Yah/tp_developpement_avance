@@ -23,7 +23,7 @@ export class RankingService implements OnModuleInit {
     this.refreshRanking();
   }
 
-  refreshRanking() {
+  refreshRanking(): void {
     const players = this.playerService.findAll();
     this.ranking = players.sort((a, b) => b.rank - a.rank);
   }
