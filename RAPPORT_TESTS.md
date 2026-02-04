@@ -68,7 +68,3 @@ L'application affiche:
 - **Formulaire de match** pour déclarer les résultats
 - **Formulaire de création** de nouveaux joueurs
 - **Contrôle des matches automatiques** avec statut en direct
-
----
-
-*Tests validés le 03 février 2026 - 100% de réussite*
