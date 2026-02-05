@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const match_controller_1 = require("./match.controller");
 const match_service_1 = require("./match.service");
 const player_module_1 = require("../player/player.module");
+const nosql_service_1 = require("../common/nosql.service");
 let MatchModule = class MatchModule {
 };
 exports.MatchModule = MatchModule;
@@ -18,7 +19,7 @@ exports.MatchModule = MatchModule = __decorate([
     (0, common_1.Module)({
         imports: [player_module_1.PlayerModule],
         controllers: [match_controller_1.MatchController],
-        providers: [match_service_1.MatchService],
+        providers: [match_service_1.MatchService, nosql_service_1.NoSQLService],
         exports: [match_service_1.MatchService],
     })
 ], MatchModule);

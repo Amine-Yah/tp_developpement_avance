@@ -15,6 +15,7 @@ const player_module_1 = require("./player/player.module");
 const match_module_1 = require("./match/match.module");
 const ranking_module_1 = require("./ranking/ranking.module");
 const auto_match_module_1 = require("./auto-match/auto-match.module");
+const nosql_service_1 = require("./common/nosql.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -28,7 +29,7 @@ exports.AppModule = AppModule = __decorate([
             auto_match_module_1.AutoMatchModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService, nosql_service_1.NoSQLService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

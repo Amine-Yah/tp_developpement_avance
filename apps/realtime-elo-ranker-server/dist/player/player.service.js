@@ -12,34 +12,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerService = void 0;
 const common_1 = require("@nestjs/common");
 const event_emitter_1 = require("@nestjs/event-emitter");
+const nosql_service_1 = require("../common/nosql.service");
 let PlayerService = class PlayerService {
+    noSql;
     eventEmitter;
-    players = new Map();
-    constructor(eventEmitter) {
+    collectionName = 'players';
+    constructor(noSql, eventEmitter) {
+        this.noSql = noSql;
         this.eventEmitter = eventEmitter;
     }
     calculateAverageRank() {
-        if (this.players.size === 0) {
+        const players = this.noSql.find(this.collectionName);
+        if (players.length === 0) {
             return 1200;
         }
-        const sum = Array.from(this.players.values()).reduce((acc, player) => acc + player.rank, 0);
-        return Math.round(sum / this.players.size);
+        const sum = players.reduce((acc, player) => acc + player.rank, 0);
+        return Math.round(sum / players.length);
     }
     create(createPlayerDto) {
         if (!createPlayerDto.id || createPlayerDto.id.trim().length === 0) {
             throw new common_1.BadRequestException('Player ID is invalid');
         }
-        if (this.players.has(createPlayerDto.id)) {
+        if (this.noSql.findOne(this.collectionName, { id: createPlayerDto.id })) {
             throw new common_1.ConflictException('Player already exists');
         }
         const averageRank = this.calculateAverageRank();
-        const player = {
+        const player = this.noSql.insert(this.collectionName, {
             id: createPlayerDto.id,
             rank: averageRank,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-        this.players.set(player.id, player);
+        });
         this.eventEmitter.emit('ranking.update', {
             type: 'RankingUpdate',
             player: {
@@ -50,11 +51,17 @@ let PlayerService = class PlayerService {
         return player;
     }
     findAll() {
-        const playersArray = Array.from(this.players.values());
-        return playersArray.sort((a, b) => b.rank - a.rank);
+        const players = this.noSql.findSorted(this.collectionName, 'rank', 'desc');
+        return players.map(p => ({
+            id: p.id,
+            rank: p.rank,
+            createdAt: p.createdAt,
+            updatedAt: p.updatedAt,
+        }));
     }
     findOne(id) {
-        const player = this.players.get(id);
+        const player = this.noSql.findById(this.collectionName, id) ||
+            this.noSql.findOne(this.collectionName, { id });
         if (!player) {
             throw new common_1.NotFoundException(`Player #${id} not found`);
         }
@@ -62,22 +69,25 @@ let PlayerService = class PlayerService {
     }
     update(id, updatePlayerDto) {
         const player = this.findOne(id);
+        const updates = {};
         if (updatePlayerDto.rank !== undefined) {
-            player.rank = updatePlayerDto.rank;
-            player.updatedAt = new Date();
+            updates.rank = updatePlayerDto.rank;
         }
-        return player;
+        const updated = this.noSql.updateById(this.collectionName, id, updates);
+        return updated;
     }
     remove(id) {
-        if (!this.players.has(id)) {
+        const player = this.findOne(id);
+        const success = this.noSql.deleteById(this.collectionName, id);
+        if (!success) {
             throw new common_1.NotFoundException(`Player #${id} not found`);
         }
-        this.players.delete(id);
     }
 };
 exports.PlayerService = PlayerService;
 exports.PlayerService = PlayerService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [event_emitter_1.EventEmitter2])
+    __metadata("design:paramtypes", [nosql_service_1.NoSQLService,
+        event_emitter_1.EventEmitter2])
 ], PlayerService);
 //# sourceMappingURL=player.service.js.map

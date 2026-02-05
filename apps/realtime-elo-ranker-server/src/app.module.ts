@@ -6,6 +6,7 @@ import { PlayerModule } from './player/player.module';
 import { MatchModule } from './match/match.module';
 import { RankingModule } from './ranking/ranking.module';
 import { AutoMatchModule } from './auto-match/auto-match.module';
+import { NoSQLService } from './common/nosql.service';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { AutoMatchModule } from './auto-match/auto-match.module';
     AutoMatchModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, NoSQLService],
 })
 export class AppModule {}

@@ -12,16 +12,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MatchService = void 0;
 const common_1 = require("@nestjs/common");
 const event_emitter_1 = require("@nestjs/event-emitter");
+const nosql_service_1 = require("../common/nosql.service");
 const player_service_1 = require("../player/player.service");
 const elo_calculator_1 = require("../common/elo-calculator");
 let MatchService = class MatchService {
+    noSql;
     playerService;
     eventEmitter;
-    matches = [];
+    collectionName = 'matches';
     nextId = 1;
-    constructor(playerService, eventEmitter) {
+    constructor(noSql, playerService, eventEmitter) {
+        this.noSql = noSql;
         this.playerService = playerService;
         this.eventEmitter = eventEmitter;
+        const matches = this.noSql.find(this.collectionName);
+        if (matches.length > 0) {
+            this.nextId = Math.max(...matches.map(m => m.id || 0)) + 1;
+        }
     }
     publishMatchResult(createMatchDto) {
         const { winner: winnerId, loser: loserId, draw } = createMatchDto;
@@ -48,7 +55,7 @@ let MatchService = class MatchService {
             player2NewRank,
             timestamp: new Date(),
         };
-        this.matches.push(match);
+        this.noSql.insert(this.collectionName, match);
         this.eventEmitter.emit('ranking.update', {
             type: 'RankingUpdate',
             player: { id: winner.id, rank: player1NewRank },
@@ -63,13 +70,14 @@ let MatchService = class MatchService {
         };
     }
     findAll() {
-        return this.matches;
+        return this.noSql.find(this.collectionName);
     }
 };
 exports.MatchService = MatchService;
 exports.MatchService = MatchService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [player_service_1.PlayerService,
+    __metadata("design:paramtypes", [nosql_service_1.NoSQLService,
+        player_service_1.PlayerService,
         event_emitter_1.EventEmitter2])
 ], MatchService);
 //# sourceMappingURL=match.service.js.map

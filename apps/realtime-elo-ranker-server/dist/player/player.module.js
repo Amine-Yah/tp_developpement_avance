@@ -10,14 +10,15 @@ exports.PlayerModule = void 0;
 const common_1 = require("@nestjs/common");
 const player_service_1 = require("./player.service");
 const player_controller_1 = require("./player.controller");
+const nosql_service_1 = require("../common/nosql.service");
 let PlayerModule = class PlayerModule {
 };
 exports.PlayerModule = PlayerModule;
 exports.PlayerModule = PlayerModule = __decorate([
     (0, common_1.Module)({
-        providers: [player_service_1.PlayerService],
+        providers: [player_service_1.PlayerService, nosql_service_1.NoSQLService],
         controllers: [player_controller_1.PlayerController],
-        exports: [player_service_1.PlayerService],
+        exports: [player_service_1.PlayerService, nosql_service_1.NoSQLService],
     })
 ], PlayerModule);
 //# sourceMappingURL=player.module.js.map

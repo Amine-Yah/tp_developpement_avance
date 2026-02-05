@@ -1,5 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { NoSQLService } from '../common/nosql.service';
 import { PlayerService } from '../player/player.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { calculateMatchResults } from '../common/elo-calculator';
@@ -18,13 +19,20 @@ export interface Match {
 
 @Injectable()
 export class MatchService {
-  private matches: Match[] = [];
+  private collectionName = 'matches';
   private nextId = 1;
 
   constructor(
+    private readonly noSql: NoSQLService,
     private readonly playerService: PlayerService,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) {
+    // Charger le dernier ID depuis la BD
+    const matches = this.noSql.find(this.collectionName);
+    if (matches.length > 0) {
+      this.nextId = Math.max(...matches.map(m => m.id || 0)) + 1;
+    }
+  }
 
   publishMatchResult(createMatchDto: CreateMatchDto) {
     const { winner: winnerId, loser: loserId, draw } = createMatchDto;
@@ -52,7 +60,7 @@ export class MatchService {
     this.playerService.update(winner.id, { rank: player1NewRank });
     this.playerService.update(loser.id, { rank: player2NewRank });
 
-    // Sauvegarde du match dans l'historique
+    // Sauvegarde du match dans la BD
     const match: Match = {
       id: this.nextId++,
       player1Id: winner.id,
@@ -64,7 +72,7 @@ export class MatchService {
       player2NewRank,
       timestamp: new Date(),
     };
-    this.matches.push(match);
+    this.noSql.insert(this.collectionName, match);
 
     // Émission des événements
     this.eventEmitter.emit('ranking.update', {
@@ -84,6 +92,6 @@ export class MatchService {
   }
 
   findAll(): Match[] {
-    return this.matches;
+    return this.noSql.find(this.collectionName);
   }
 }
