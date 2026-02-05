@@ -9,10 +9,10 @@
 **Technologie Stack:**
 - **Backend:** NestJS (TypeScript) - Port 3001
 - **Frontend:** Next.js 15 (React) - Port 3000
-- **Base de Données:** SQLite avec TypeORM
+- **Base de Données:** NoSQL JSON (Fichiers persistants)
 - **UI:** Tailwind CSS + Composants réutilisables
 - **Temps réel:** Server-Sent Events (SSE)
-- **Stockage:** Persistant (SQLite) + En mémoire pour SSE
+- **Stockage:** Persistant (JSON) + En mémoire pour SSE
 
 ---
 
@@ -145,33 +145,48 @@ GET  /api/auto-match/status - Vérifier l'état
 
 ---
 
-### 6. Base de Données Persistante
+### 6. Base de Données Persistante NoSQL
 
 **Technologie:**
-- SQLite avec TypeORM
-- Auto-synchronisation des schémas
-- Fichier: `data/elo-ranker.db`
+- NoSQL personnalisé basé sur JSON
+- Stockage en fichiers locaux (`data/`)
+- Service NoSQL réutilisable avec API simple: insert, find, findById, updateById, deleteById, findSorted, etc.
 
-**Entités:**
+**Collections de Fichiers:**
 ```
+data/
+├── players.json   - Collection des joueurs avec leurs rangs
+└── matches.json   - Collection historique des matchs
+```
+
+**Format des données:**
+
 Players:
-- id (String, clé primaire)
-- rank (Number)
-- createdAt (Date)
-- updatedAt (Date)
+```
+{
+  "id": "Alice",
+  "rank": 1232
+}
+```
 
 Matches:
-- id (Number, auto-généré)
-- player1Id, player2Id (String)
-- result (String: 'player1' | 'player2' | 'draw')
-- rangs avant/après (Number)
-- timestamp (Date)
+```
+{
+  "id": 1,
+  "winner": "Alice",
+  "loser": "Bob",
+  "draw": false,
+  "rangsAvant": { "Alice": 1200, "Bob": 1200 },
+  "rangsApres": { "Alice": 1232, "Bob": 1168 }
+}
 ```
 
 **Avantages:**
-- Persistance entre redémarrages
+- Persistance entre redémarrages automatique
 - Aucun serveur externe nécessaire
 - Performance optimale pour ce cas d'usage
+- API NoSQL simple et réutilisable
+- Fichiers JSON lisibles et modifiables manuellement
 
 ---
 
